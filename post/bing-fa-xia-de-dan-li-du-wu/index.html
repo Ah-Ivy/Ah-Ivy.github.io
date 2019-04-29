@@ -1,0 +1,283 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>并发下的单例独舞 | ooooor</title>
+<meta name="description" content="书是解救我的郎中">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://ooooor.github.io/favicon.ico?v=1556528270497">
+<link rel="stylesheet" href="https://ooooor.github.io/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://ooooor.github.io">
+        <img class="avatar" src="https://ooooor.github.io/images/avatar.png?v=1556528270497" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://ooooor.github.io">
+        <h1 class="site-title">ooooor</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+            <div class="feature-container" style="background-image: url('https://ooooor.github.io/post-images/bing-fa-xia-de-dan-li-du-wu.jpeg')">
+            </div>
+          
+          <h2 class="post-title">并发下的单例独舞</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2019-04-29</span>
+            
+          </div>
+          <div class="post-content">
+            <h4 id="对象创建过程消耗内存极其严重必须进行约束作为创建型模式的单例模式singleton始终保持应用程序中某一个实例有且仅有一个可以很显著的提升程序性能">对象创建过程消耗内存极其严重，必须进行约束，作为创建型模式的单例模式(Singleton)，始终保持应用程序中某一个实例有且仅有一个，可以很显著的提升程序性能。</h4>
+ <!-- more -->
+<h5 id="以下将探讨singleton的四种实现方式">以下将探讨singleton的四种实现方式.</h5>
+<pre><code> 单线程下的Singleton的稳定性是极好的，可分为两大类： 
+</code></pre>
+<p><strong>1.Eager（饿汉型）： 类加载时立即创建对象。</strong></p>
+<pre><code>public class EagerSingleton {
+	//1. 类加载时就立即产生实例对象，通过设置静态变量被外界获取
+	//2. 并使用private保证封装安全性
+	private static EagerSingleton eagerSingleton  = new EagerSingleton();
+	
+	//3. 通过构造方法的私有化，不允许外部直接创建对象，确保单例的安全性
+	private EagerSingleton(){
+	}
+	public static EagerSingleton getEagerSingleton(){
+		return eagerSingleton;
+	}
+</code></pre>
+<p><strong>2.Lazy（懒汉型）：类加载时没有立即创建对象，等到第一个用户获取才进行实例化。</strong></p>
+<pre><code>public class LazySingleton {
+    //1. 类加载时并没有创建唯一实例
+	private static LazySingleton lazySingleton;
+	
+	private LazySingleton() {
+	}
+        
+    //2、提供一个获取实例的静态方法
+	public static LazySingleton getLazySingleton() {
+		if (lazySingleton == null) {
+			lazySingleton = new LazySingleton();
+		} 
+		return lazySingleton;
+	}
+</code></pre>
+<p>就性能方面而言，LazySingleton 明显优于 EagerSingleton ，若类的加载需要耗费大量的资源(e.g. 读取大文件信息)，那么LazySingleton 的优势显而易见。但通过阅读代码，很容易发现一个致命问题。<strong>多线程间如何保持安全性？</strong></p>
+<hr>
+<p><strong>下面将对多线程并发问题进行解析：</strong></p>
+<pre><code>解决该问题的关键在于两方面：1.同步;  2.性能；
+</code></pre>
+<h6 id="1首先我们来解决同步问题-为什么会产生同步异常的问题呢以一个经典例子作为解释">1.首先我们来解决同步问题 : 为什么会产生同步异常的问题呢？以一个经典例子作为解释：</h6>
+<pre><code>   有线程A,线程B同时调用getLazySingleton()获取实例，A调用时判断instance为null，正准备进行初始化时，突然A线程被挂起了，此时对象并未实例化成功，更糟的事随后发生，B线程被运行了，他也判断了instance为null，此时A，B都进入了实例化阶段，这样就产生了两个实例，破坏单例原则。		
+</code></pre>
+<p><strong>如何解救呢？</strong>
+作为一个java的开发者，对<strong>synchronized</strong>一定不陌生，提到多线程，大部分人想到的都是他（JDK6后，他的性能提升巨大，解决简单并发，非常适用）。
+那就让我们用synchronized来尝试解决吧：</p>
+<pre><code>//由synchronized进行同步加锁
+public synchronized static LazySingleton getLazySingleton() {
+		if (lazySingleton == null) {
+			lazySingleton = new LazySingleton();
+		} 
+		return lazySingleton;
+	}
+</code></pre>
+<p>如此同步问题看似解决，但是作为一个开发者，最重要的是性能的保障，使用synchronized有利有弊，由于加锁操作，代码段被加上悲观锁，只有等一个请求完成，下个请求才能进入执行。通常加上synchronized关键字的代码片会比同等量级的代码慢上几倍，这是我们不愿见到的。那如何避免这一问题呢？在java对synchronized的定义里有这样的建议：越迟使用synchronized，性能越优（细化锁）。</p>
+<h6 id="2因此我们需要开始解决性能的问题了-按照synchronized优化">2.因此，我们需要开始解决性能的问题了。按照synchronized优化：</h6>
+<pre><code>public class DoubleCheckLockSingleton {
+    //使用volatile保证每次取值不是从缓存中取，而是从真正对应的内存地址中取.（下文解释）
+	private static volatile DoubleCheckLockSingleton doubleCheckLockSingleton;
+	
+	private DoubleCheckLockSingleton(){
+		
+	}
+	
+	public static DoubleCheckLockSingleton getDoubleCheckLockSingleton(){
+		//配置双重检查锁（下文解释）
+		if(doubleCheckLockSingleton == null){
+			synchronized (DoubleCheckLockSingleton.class) {
+				if(doubleCheckLockSingleton == null){
+					doubleCheckLockSingleton = new DoubleCheckLockSingleton();
+				}
+			}
+		}
+		return doubleCheckLockSingleton;
+	}
+}
+</code></pre>
+<p>上述源码就是经典的<strong>volatile关键字（JDK1.5 后重生）+双重检查锁（DoubleCheck）</strong>，最大程度的优化了sychronized带来的性能开销。下面将为大家解释volatile与DoubleCheck。</p>
+<p><strong>1.volatile</strong>
+是在JDK1.5后才正式被实现使用的，之前的版本只是定义了该关键字，未有具体实现。若想理解volatile就必须对JVM自身的内存管理有些许了解：</p>
+<p><strong>1.1</strong> 遵循着摩尔定律，内存的读写速度已远不能满足CPU，因此现代计算机引入了在CPU上添加高速缓存的机制，由缓存预读取内存的值，并暂存于缓存中，通过计算，再更新内存中的相应值。
+<strong>1.2</strong> 而JVM模仿PC的这一做法，在内存中划分了自己的<strong>工作内存</strong>，该部分内存作用与高速缓存一致，很显著的提高JVM工作效率，但凡事都有利有弊，这一做法也导致工作内存与其他内存通信时容易导致传输上的问题。volatile的一个功能就是强制的从内存中读取最新的值，避免缓存与内存不一致的状况。</p>
+<p><strong>1.3</strong> volatile的另一个功能也是和JVM相关，即JVM会通过自身的判断，将<strong>源码的执行顺序重排</strong>，保证指令流水线连贯性，以达到最优的执行方案。这种做法提高了性能，但对DoubleCheck却会产生意想外的结果，两线程可能互相干扰。而volatile提供了happens-before guarantee（写优先于读），使对象不被干扰，保证安全的稳定性。</p>
+<p><strong>2.DoubleCheck</strong>
+这是现代编程的遗留，假设进入同步块之后，对象已被实例化，此时需再次进行判断。</p>
+<hr>
+<p>当然还有一种<strong>官方推荐的单例实现方法</strong>：</p>
+<p>由于类的构造在定义中已是原子性的，因此上述的各种问题都不会再产生，是一种很好的单例实现方式，推荐使用。</p>
+<pre><code>//使用内部类进行单例构造
+public class NestedClassSingleton {
+	private NestedClassSingleton(){
+		
+	}
+	private static class SingletonHolder{
+		private static final NestedClassSingleton nestedClassSingleton = new NestedClassSingleton();
+	}
+	public static NestedClassSingleton getNestedClassSingleton(){
+		return SingletonHolder.nestedClassSingleton;
+	}
+}
+
+</code></pre>
+<p><em>祝近安</em>
+<a href="https://github.com/ooooor">ooooor</a></p>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://ooooor.github.io/post/duo-xian-cheng-qia-si-tian-tang-di-yu">
+              <h3 class="post-title">
+                下一篇：多线程，恰似天堂地狱
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+        
+          <div id="gitalk-container"></div>
+        
+
+        
+      
+
+      <div class="site-footer">
+  <div class="slogan">书是解救我的郎中</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/ooooor" target="_blank">ooooor</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: 'c8db63cdd270e6869af2',
+        clientSecret: 'ced31bbeb80de2d1045b1cc1356dce13c1136539',
+        repo: 'ooooor.github.io',
+        owner: 'ooooor',
+        admin: ['ooooor'],
+        id: location.pathname,      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>
