@@ -1,0 +1,312 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>从intern深入JMM变迁史 | ooooor</title>
+<meta name="description" content="书是解救我的郎中">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://ooooor.github.io/favicon.ico?v=1556529651980">
+<link rel="stylesheet" href="https://ooooor.github.io/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://ooooor.github.io">
+        <img class="avatar" src="https://ooooor.github.io/images/avatar.png?v=1556529651980" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://ooooor.github.io">
+        <h1 class="site-title">ooooor</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">从intern深入JMM变迁史</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2019-04-29</span>
+            
+          </div>
+          <div class="post-content">
+            <p>常量池，是JVM提供的缓存机制。</p>
+<!-- more --> 
+<h4 id="一-如何将string对象存储到常量池中">一. 如何将String对象存储到常量池中：</h4>
+<ol>
+<li>直接使用双引号声明出来的<code>String</code>对象会直接存储在常量池中。</li>
+<li>使用intern方法，若常量池中不存在，则置入。</li>
+<li>利用编译器的自动优化（eg. String str = “Hey” + “Man” //将HeyMan置入String pool）;</li>
+</ol>
+<h4 id="二-string常量池的底层实现">二. String常量池的底层实现</h4>
+<p>String Pool是一个固定大小的Hashtable，默认长度为1009，若Hash冲突严重，导致链表过长，性能大幅下降，且不可自动扩容（使用jni调用C++的 StringTable::intern 方法）。</p>
+<p>JDK7+可通过配置-XX: StringTableSize=, 设置初始长度。</p>
+<h4 id="三-perm-space的变更">三. Perm Space的变更</h4>
+<ul>
+<li>
+<p>从一个经典面试题入手：<code>String s = new String(&quot;abc&quot;)</code>创建了几个对象？分别创建了两个对象，第一个对象“abc”存储在常量池中，第二个对象在Java Heap中的String对象。</p>
+</li>
+<li>
+<h5 id="jdk7后将字符串常量池从perm区移到heap区域导致了intern方法发生巨大变化如果存在堆中的对象会直接保存对象的引用而不会重新创建对象">JDK7后将字符串常量池从Perm区移到heap区域，导致了intern方法，发生巨大变化，如果存在堆中的对象，会直接保存对象的引用，而不会重新创建对象。</h5>
+<ol>
+<li>
+<p>从以下例子，可以清晰看出变化。</p>
+<pre><code class="language-java">/**
+     * 字符串常量池在JDK6/7中的区别
+     * output:
+     *      JDK6:   false;
+     *      JDK7:   true;
+     */
+    public void stringPoolDiff() {
+        // 等价于 String Hello = &quot;Hello&quot;; String world = &quot;World&quot;; String s1 = Hello + world;
+        // 会被编译成 s1 = new StringBuilder().append(new String(&quot;Hello&quot;)).append(new String()).toString();
+        String s1 = new String(&quot;Hello&quot;) + new String(&quot;World&quot;);
+        s1.intern();        //jdk7 string pool中存储s1的引用
+        String s2 = &quot;HelloWorld&quot;;
+        System.out.println(s1 == s2);
+    }
+</code></pre>
+</li>
+</ol>
+</li>
+</ul>
+<p><img src="http://img.blog.csdn.net/20170911161259192?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbmVoY0phdmE=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="JDK6 String Pool">
+<img src="http://img.blog.csdn.net/20170911161558643?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbmVoY0phdmE=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="JDK7 String Pool"></p>
+<h5 id="可以从图中看出jdk7中intern方法往string-pool存储的是一个堆中对象的引用">可以从图中看出，JDK7中，intern()方法，往String Pool存储的是一个堆中对象的引用。</h5>
+<h4 id="四-string中易陷入的坑jdk7中的内存模型">四. String中易陷入的坑（JDK7中的内存模型）</h4>
+<ul>
+<li>new String(&quot;Hello&quot;),创建两个对象，分别存在String Pool和Heap中，intern()时，如果String Pool中已存在，则返回该引用。</li>
+</ul>
+<pre><code class="language-java">/**
+     * 字符串常量池与堆空间
+     * output:
+     *      s1 storeAdr: 73c6c3b2
+     *      s2 storeAdr: 48533e64
+     *      s1_stringPool store address: 48533e64
+     */
+    @Test
+    public void poolAndHeapStore() {
+        // string pool未存在“Hello”，先将“Hello”置入String Pool，再进行对象创建
+        String s1 = new String(&quot;Hello&quot;);    
+        System.out.println(&quot;s1 storeAdr: &quot; + Integer.toHexString(System.identityHashCode(s1)));
+        
+        String s2 = &quot;Hello&quot;;    // String Pool已存在“Hello”，直接引用
+        System.out.println(&quot;s2 storeAdr: &quot; + Integer.toHexString(System.identityHashCode(s2)));
+        
+        String s1_stringPool = s1.intern();
+        System.out.println(&quot;s1_stringPool store address: &quot; + Integer.toHexString(System.identityHashCode(s1_stringPool)));
+    }
+</code></pre>
+<ul>
+<li>编译器的自动优化</li>
+</ul>
+<pre><code class="language-java">/**
+     * 编译器自动优化字符字面量
+     * output:
+     *      true
+     *      true
+     *      false
+     */
+    @Test
+   public void compileAutoOptimize() {
+        // 编译器自动优化，“Hello”和“World”不存入String Pool，直接置入“HelloWorld”
+        String s1 = &quot;Hello&quot; + &quot;World&quot;;
+        String s2 = &quot;HelloWorld&quot;;
+        System.out.println(s1 == s2);
+        // 验证&quot;Hello&quot;并未置入String Pool
+        String s3 = new String(&quot;Hel&quot;) + new String(&quot;lo&quot;);
+        s3.intern();
+        String s4 = &quot;Hello&quot;;
+        System.out.println(s3 == s4);
+        // 只有字符常量拼接，编译器才进行优化
+        String s5 = &quot;Hello&quot;.concat(&quot;World&quot;);
+        System.out.println(s2 == s5);
+    }
+</code></pre>
+<ul>
+<li>String Pool只在编译期放入</li>
+</ul>
+<pre><code class="language-java">/**
+     * 常量字符串编译期才放入string pool
+     * output:
+     *      false
+     *      true
+     */
+    @Test
+    public void poolAndHeapStore6() {
+        // 常量字符串在编译期才放入string pool，s2通过s1而得到，属于运行时赋值，存于堆中;
+        String s1 = &quot;Hello&quot;;
+        String s2 = s1 + &quot;&quot;;
+        String s3 = &quot;Hello&quot; + &quot;&quot;;
+        System.out.println(s1 == s2);
+        System.out.println(s1 == s3);
+    }
+</code></pre>
+<h3 id="五-string的不可变immutable性的探究">五. String的不可变(immutable)性的探究：</h3>
+<p>在《Core Java》中对不可变字符串的描述是这样：“不可变字符串却有一个优点：编译器可以让字符串共享。Java的设计者认为共享带来的高效率远远胜过于提取、拼接字符串所带来的低效率。”
+关于String的不可变性，是由于API中未对外提供相应的更改方法，使value的值恒定不可变。但我们可通过Java的动态反射机制，打破这种不可变性。</p>
+<pre><code class="language-java">/**
+     * 通过动态反射改变String的value值
+     *
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
+    private static void modifyStringValue() throws NoSuchFieldException, IllegalAccessException {
+        String oriStr = new String(&quot;Hello&quot;);
+        System.out.println(&quot;oriStr store address: &quot; + Integer.toHexString(System.identityHashCode(oriStr)));
+        System.out.println(oriStr);
+
+        Field field = String.class.getDeclaredField(&quot;value&quot;);
+        field.setAccessible(true);
+        field.set(oriStr, &quot;World&quot;.toCharArray());
+        System.out.println(&quot;newStr store address: &quot; + Integer.toHexString(System.identityHashCode(oriStr)));
+        System.out.println(oriStr);
+    }
+</code></pre>
+<p><em>祝近安</em>
+<a href="https://github.com/ooooor">ooooor</a></p>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://ooooor.github.io/post/bing-fa-xia-de-dan-li-du-wu">
+              <h3 class="post-title">
+                下一篇：并发下的单例独舞
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+        
+          <div id="gitalk-container"></div>
+        
+
+        
+      
+
+      <div class="site-footer">
+  <div class="slogan">书是解救我的郎中</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/ooooor" target="_blank">ooooor</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: 'c8db63cdd270e6869af2',
+        clientSecret: 'ced31bbeb80de2d1045b1cc1356dce13c1136539',
+        repo: 'ooooor.github.io',
+        owner: 'ooooor',
+        admin: ['ooooor'],
+        id: location.pathname,      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>
