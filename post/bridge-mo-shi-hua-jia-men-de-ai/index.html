@@ -1,0 +1,259 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>Bridge模式，画家们的爱 | ooooor</title>
+<meta name="description" content="书是解救我的郎中">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://ooooor.github.io/favicon.ico?v=1557041727788">
+<link rel="stylesheet" href="https://ooooor.github.io/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://ooooor.github.io">
+        <img class="avatar" src="https://ooooor.github.io/images/avatar.png?v=1557041727788" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://ooooor.github.io">
+        <h1 class="site-title">ooooor</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">Bridge模式，画家们的爱</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2019-05-05</span>
+            
+          </div>
+          <div class="post-content">
+            <p>Bridge的精髓就是书上常说的“ <strong>把抽象和实现解耦，使得它们可以独立地变化</strong>”
+<strong>1.开关，风扇与电灯：</strong>
+在实际生活中，我们利用开关（各式各样的开关）来操纵电灯（电器之类）。那么问题来了，如果电灯坏了，我们仅仅只要更换灯泡这个对象，而开关无需一起更换。这映射出面向对象的愿望：各司其职，开关和电器之间借由电线这个桥梁履行着各自的职责，并互不干扰。这就是著名的Bridge模式。
+ToggleSwitch并不是指专用于打开电灯的开关，可以想象为上下波动型开关。RotarySwitch 可想象为旋钮型开关。</p>
+<p><img src="http://img.blog.csdn.net/20151021153135564" alt="ElectricalEquipment's ClassDiagram"></p>
+<p><strong>2.蜡笔，毛笔的选择：</strong>
+如果要完成一幅巨作，有大片的蓝色天空，线条轮廓清晰的房屋。选择蜡笔，先买了一盒12色的小口径蜡笔，天空画了一半，我血都吐出来了，什么鬼，这小小支的蜡笔要涂到什么时候，于是我又买来了12色大口径的蜡笔，这样我一挥一来，天空就好了，内心欢喜。然后我又想买12色的中口径、12色另些口径，，，慢慢的，蜡笔填满了我的钱包，我追求的世界和平呢？终于我开始思考，诶，我用毛笔吧。说真，买三种型号（大，中，小）毛笔，再买来12色的水彩原料，我的世界也就光明起来，真是很天才的想法。
+这是我关于Bridge最爱的例子，将面向对象诠释的生动。你看：
+1.蜡笔由于不能将大小与颜色解耦，所以不及毛笔的灵活性。就是对抽象和耦合的最精彩概述。
+2.毛笔将型号、颜色归类，不就是封装的精髓。
+3.那句“各司其职，职责单一”，在毛笔与水彩原料的设计上，简直凶残的体现。</p>
+<p><img src="http://img.blog.csdn.net/20151021155304942" alt="Bridge's ClassDiagram"></p>
+<h4 id="下面就是一堆代码的实现了理解思想编码就任游星空了">下面就是一堆代码的实现了，理解思想，编码就任游星空了。</h4>
+<pre><code>public interface Equipment{
+    void powerOn（）;
+    void powerOff();
+}
+
+public class LightEquipment implements Equipment{
+    @override
+    public void powerOn(){
+        System.out.println(&quot;Light ON&quot;);
+    }
+    @override
+    public void powerOff(){
+        System.out.println(&quot;Light OFF&quot;);
+    }
+}
+
+public class FanEquipment implements Equipment{
+    @override
+    public void powerOn(){
+        System.out.println(&quot;Fan ON&quot;);
+    }
+    @override
+    public void powerOff(){
+        System.out.println(&quot;Fan OFF&quot;);
+    }
+}
+</code></pre>
+<pre><code>  public class Switch{
+      private Equipment equipment;
+      ...
+      //equipment的setter，getter方法
+      
+      public void on(){
+          //开启开关的操作
+          System.out.println(&quot;Switch ON&quot;);
+          equipment.powerOn();
+      }
+      public void off(){
+          //关闭开关的操作
+          System.out.println(&quot;Switch OFF&quot;);
+          equipment.powerOff();
+      }
+  }
+ 
+ public class RotarySwitch extends Switch{    
+ }
+
+ public class ToggleSwitch extends Switch{
+ }
+</code></pre>
+<pre><code>    public void static main(String[] args){
+        Switch toggleSwitch= new ToggleSwitch();    //拨动型开关
+        Switch rotarySwitch= new RotarySwitch();    //旋钮型开关
+
+        toggleSwitch.setEquipment(new Light());     //电灯使用拨动型开关
+        toggleSwitch.on();
+        toggleSwitch.off();
+
+        //fan...
+    }
+</code></pre>
+<p>正如上面例子所示：
+若电灯使用不再使用拨动开关，而换成旋钮开关，则只需做如下变化，将各对象解耦：</p>
+<pre><code>rotarySwitch.setEquipment(new Light());    //电灯使用旋钮型开关
+</code></pre>
+<p>以上类图使用ProcessOn所绘，www.processon.com</p>
+<p>划破距离长空，识得人间。
+近安
+<a href="https://github.com/ooooor">ooooor</a></p>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://ooooor.github.io/post/cong-intern-shen-ru-jmm-bian-qian-shi">
+              <h3 class="post-title">
+                下一篇：从intern深入JMM变迁史
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+        
+          <div id="gitalk-container"></div>
+        
+
+        
+      
+
+      <div class="site-footer">
+  <div class="slogan">书是解救我的郎中</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/ooooor" target="_blank">ooooor</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: 'c8db63cdd270e6869af2',
+        clientSecret: 'ced31bbeb80de2d1045b1cc1356dce13c1136539',
+        repo: 'ooooor.github.io',
+        owner: 'ooooor',
+        admin: ['ooooor'],
+        id: location.pathname,      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>
