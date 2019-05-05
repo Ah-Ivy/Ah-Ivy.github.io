@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>Redis面试总结 | ooooor</title>
+<meta name="description" content="书是解救我的郎中">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://ooooor.github.io/favicon.ico?v=1557042004464">
+<link rel="stylesheet" href="https://ooooor.github.io/styles/main.css">
+
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://ooooor.github.io">
+        <img class="avatar" src="https://ooooor.github.io/images/avatar.png?v=1557042004464" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://ooooor.github.io">
+        <h1 class="site-title">ooooor</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">Redis面试总结</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2019-05-05</span>
+            
+          </div>
+          <div class="post-content">
+            <!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="renderer" content="webkit"/>
+<meta name="author" content="mubu.com"/>
+</head>
+<body style="margin: 50px 20px;color: #333;font-family: SourceSansPro,-apple-system,BlinkMacSystemFont,'PingFang SC',Helvetica,Tahoma,Arial,'Microsoft YaHei',微软雅黑,黑体,Heiti,sans-serif,SimSun,宋体,serif">
+<div class="export-wrapper"><div style="font-size: 22px; padding: 0 15px 0;"><div style="padding-bottom: 24px">redis</div><div style="background: #e5e6e8; height: 1px; margin-bottom: 20px;"></div></div><ul style="list-style: disc outside;"><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">数据都是缓存在内存中。区别的是redis会周期性的把更新的数据写入磁盘或者把修改操作写入追加的记录文件，并且在此基础上实现了master-slave(主从)同步。</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">数据类型</span><ul class="children" style="list-style: disc outside; padding-bottom: 4px;"><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">string：最基本的数据类型，二进制安全的字符串，最大512M。</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">list：按照添加顺序保持顺序的字符串列表。</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">set：无序的字符串集合，不存在重复的元素。</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">sorted set：已排序的字符串集合。</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">hash：key-value对的一种集合。</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">bitmap：更细化的一种操作，以bit为单位。</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">hyperloglog：基于概率的数据结构</span></li></ul></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">Redis与Memcached的区别与比较</span><ul class="children" style="list-style: disc outside; padding-bottom: 4px;"><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">1. Redis不仅仅支持简单的k/v类型的数据，同时还提供list，set，zset，hash等数据结构的存储。memcache支持简单的数据类型，String。</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">2 、Redis支持数据的备份，即master-slave模式的数据备份。</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">3 、Redis支持数据的持久化，可以将内存中的数据保持在磁盘中，重启的时候可以再次加载进行使用,而Memecache把数据全部存在内存之中</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">4、 redis的速度比memcached快很多</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">5、Memcached是多线程，非阻塞IO复用的网络模型；Redis使用单线程的IO复用模型。</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">Memcached追求的高性能的内存服务；而Redis追求的不仅仅是内存运行，还有数据持久化的需</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">Memcached与Redis都是C语言实现，但是不约而同的都抛弃了传统C语言中的malloc/free函数，而选择了自主实现内存模型。</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">Memcached使用预分配的内存池的方式，使用slab和大小不同的chunk来管理内存，Redis使用现场申请内存的方式来存储数据，会在一定程度上存在内存碎片。</span></li></ul></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">Redis优点</span><ul class="children" style="list-style: disc outside; padding-bottom: 4px;"><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">(1) 速度快，因为数据存在内存中，类似于HashMap，HashMap的优势就是查找和操作的时间复杂度都是O(1)</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">(2)支持丰富数据类型，支持string，list，set，sorted set，hash</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">(3) 支持事务，操作都是原子性，所谓的原子性就是对数据的更改要么全部执行，要么全部不执行</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">(4) 丰富的特性：可用于缓存，消息，按key设置过期时间，过期后将会自动删除</span></li></ul></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">Redis list的实现为一个双向链表</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">string类型是Redis最基本的数据类型，一个键最大能存储512MB。</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">sorted set增加了一个权重参数score，使得集合中的元素能够按score进行有序排列。</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">redis有哪些数据淘汰策略</span><ul class="children" style="list-style: disc outside; padding-bottom: 4px;"><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">1. volatile-lru：从已设置过期时间的数据集（server.db[i].expires）中挑选最近最少使用的数据淘汰</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">2. volatile-ttl：从已设置过期时间的数据集（server.db[i].expires）中挑选将要过期的数据淘汰</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">3. volatile-random：从已设置过期时间的数据集（server.db[i].expires）中任意选择数据淘汰</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">4. allkeys-lru：从数据集（server.db[i].dict）中挑选最近最少使用的数据淘汰</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">5. allkeys-random：从数据集（server.db[i].dict）中任意选择数据淘汰</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">6. no-enviction（驱逐）：禁止驱逐数据</span></li></ul></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">Redis为单进程单线程模式，采用队列模式将并发访问变为串行访问。Redis本身没有锁的概念。</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">Redis 大量数据插入</span><ul class="children" style="list-style: disc outside; padding-bottom: 4px;"><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">从Redis 2.6开始redis-cli支持一种新的被称之为pipe mode的新模式用于执行大量数据插入工作。</span><ul class="children" style="list-style: disc outside; padding-bottom: 4px;"><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">cat data.txt | redis-cli --pipe</span><ul class="children" style="list-style: disc outside; padding-bottom: 4px;"><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">读取数据的同时，解析它。在分析回复的时候，我们会采用计数器的方法计数.</span></li></ul></li></ul></li></ul></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">持久化就是把内存的数据写到磁盘中去，防止服务宕机了内存数据丢失。</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">RESP 是redis客户端和服务端之前使用的一种通讯协议</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">Redis 提供了两种持久化方式:RDB（默认）&nbsp;和AOF&nbsp;</span><ul class="children" style="list-style: disc outside; padding-bottom: 4px;"><li style="line-height: 24px;"><span class="content mubu-node" images="%5B%7B%22w%22%3A340%2C%22ow%22%3A1080%2C%22oh%22%3A240%2C%22id%22%3A%227416a85fdbf31021-1461950%22%2C%22uri%22%3A%22document_image%2F5d5717ac-c303-4048-be68-1d6648d3e7c0-1461950.jpg%22%7D%5D" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">AOF(append-only file)</span><div style="padding: 3px 0"><img src="https://img.mubu.com/document_image/5d5717ac-c303-4048-be68-1d6648d3e7c0-1461950.jpg" style="max-width: 720px; width: 340px;" class="attach-img"></div><ul class="children" style="list-style: disc outside; padding-bottom: 4px;"><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">以日志的形式记录服务器所处理的每一个写、删除操作，查询操作不会记录，以文本的方式记录，可以打开文件看到详细的操作记录。</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">3种同步策略</span><ul class="children" style="list-style: disc outside; padding-bottom: 4px;"><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">每秒同步</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">每修改同步</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">不同步</span></li></ul></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">如果日志过大，Redis可以自动启用rewrite机制。即Redis以append模式不断的将修改数据写入到老的磁盘文件中，同时Redis还会创建一个新的文件用于记录此期间有哪些修改命令被执行。</span></li></ul></li><li style="line-height: 24px;"><span class="content mubu-node" images="%5B%7B%22w%22%3A345%2C%22ow%22%3A1184%2C%22oh%22%3A268%2C%22id%22%3A%2226316a85fc9ba917-1461950%22%2C%22uri%22%3A%22document_image%2F42a88e24-76d2-40c8-a2aa-ea5fca43ae9d-1461950.jpg%22%7D%2C%7B%22ow%22%3A1184%2C%22oh%22%3A268%2C%22id%22%3A%222016a85fcc158085-1461950%22%2C%22uri%22%3A%22document_image%2F23d68bc2-76c6-403d-9db6-f2c1c4ed4aa5-1461950.jpg%22%7D%5D" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">RDB(Redis DataBase)</span><div style="padding: 3px 0"><img src="https://img.mubu.com/document_image/42a88e24-76d2-40c8-a2aa-ea5fca43ae9d-1461950.jpg" style="max-width: 720px; width: 345px;" class="attach-img"></div><div style="padding: 3px 0"><img src="https://img.mubu.com/document_image/23d68bc2-76c6-403d-9db6-f2c1c4ed4aa5-1461950.jpg" style="max-width: 720px;" class="attach-img"></div><ul class="children" style="list-style: disc outside; padding-bottom: 4px;"><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">将Reids在内存中的数据库记录定时dump到磁盘上的RDB持久化</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">实际操作过程是fork一个子进程，先将数据集写入临时文件，写入成功后，再替换之前的文件，用二进制压缩存储。</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">数据高可用性存在问题，因为系统一旦在定时持久化之前出现宕机现象，此前没有来得及写入磁盘的数据都将丢失。</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">（fork 子进程）当数据集较大时，可能会导致整个服务器停止服务几百毫秒，甚至是1秒钟。</span></li></ul></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">二者选择的标准，就是看系统是愿意牺牲一些性能，换取更高的缓存一致性（aof），还是愿意写操作频繁的时候，不启用备份来换取更高的性能，待手动运行save的时候，再做备份（rdb）</span></li></ul></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">集群解决</span><ul class="children" style="list-style: disc outside; padding-bottom: 4px;"><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">1. 增加中间层，隔离具体依赖</span><ul class="children" style="list-style: disc outside; padding-bottom: 4px;"><li style="line-height: 24px;"><span class="content mubu-node" images="%5B%7B%22w%22%3A362%2C%22ow%22%3A1046%2C%22oh%22%3A896%2C%22id%22%3A%221d16a860c89a9067-1461950%22%2C%22uri%22%3A%22document_image%2F9934ee67-3340-4365-ab76-404182b93db3-1461950.jpg%22%7D%5D" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">缺点：需要维护proxy的高可用，twermproxy会成为一个单点</span><div style="padding: 3px 0"><img src="https://img.mubu.com/document_image/9934ee67-3340-4365-ab76-404182b93db3-1461950.jpg" style="max-width: 720px; width: 362px;" class="attach-img"></div></li></ul></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">2. 让redis服务器知道彼此的存在</span><ul class="children" style="list-style: disc outside; padding-bottom: 4px;"><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">通过重定向的机制来引导客户端来完成自己所需要的操作，比如客户端链接到了某一个redis服务器，说我要执行这个操作，redis服务器发现自己无法完成这个操作，那么就把能完成这个操作的服务器的信息给到客户端，让客户端去请求另外的一个服务器，这时候你就会发现每一个redis服务器都需要保持一份完整的分布式服务器信息的一份资料，不然它怎么知道让客户端去找其他的哪个服务器来执行客户端想要的操作呢。</span></li></ul></li></ul></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">而redis官方给出的cluster方案则是把分布式的这部分事情做到了每一个redis服务器中，使其不再需要其他的组件就可以独立的完成分布式的要求。</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">redis的持久化指的是redis会把内存的中的数据写入到硬盘中，在redis重新启动的时候加载这些数据，从而最大限度的降低缓存丢失带来的影响，解决缓存雪崩。</span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">Redis Cluster的具体实现细节则是采用了Hash槽的概念，即预先分配出来16384个槽：在客户端通过对Key进行CRC16（key）% 16384运算得到对应的槽是哪一个；在redis服务端则是每个服务器负责一部分槽 <a class="content-link" target="_blank" href="https://mp.weixin.qq.com/s/HUmByMp__slWxoOFdbQCOg" style="text-decoration: underline; opacity: 0.6; color: inherit;">https://mp.weixin.qq.com/s/HUmByMp__slWxoOFdbQCOg</a></span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">redis保证lua脚本的原子性，一定的场景下，是可以代替redis提供的事务相关的命令的。 <a class="content-link" target="_blank" href="https://segmentfault.com/a/1190000012919740?utm_source=tag-newest" style="text-decoration: underline; opacity: 0.6; color: inherit;">https://segmentfault.com/a/1190000012919740?utm_source=tag-newest</a></span></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">管道 </span><ul class="children" style="list-style: disc outside; padding-bottom: 4px;"><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">因为redis的客户端和服务器的连接时基于TCP的， 默认每次连接都时只能执行一个命令。管道则是允许利用一次连接来处理多条命令，从而可以节省一些tcp连接的开销。管道和事务的差异在于管道是为了节省通信的开销，但是并不会保证原子性。</span></li></ul></li><li style="line-height: 24px;"><span class="content mubu-node" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">分布式锁 <a class="content-link" target="_blank" href="https://mp.weixin.qq.com/s/ZmMx6qICoquvuxw1LKNz3w" style="text-decoration: underline; opacity: 0.6; color: inherit;">https://mp.weixin.qq.com/s/ZmMx6qICoquvuxw1LKNz3w</a></span><ul class="children" style="list-style: disc outside; padding-bottom: 4px;"><li style="line-height: 24px;"><span class="content mubu-node" images="%5B%7B%22w%22%3A354%2C%22ow%22%3A1524%2C%22oh%22%3A1846%2C%22id%22%3A%2210816a86b0152718e-1461950%22%2C%22uri%22%3A%22document_image%2F87edeed9-7e57-4865-822b-88398411cfab-1461950.jpg%22%7D%5D" style="line-height: 24px; min-height: 24px; font-size: 16px; padding: 2px 0px; display: inline-block; vertical-align: top;">value中存入过期时间，重设过期时间，使用getSet()。释放锁时，还需判断key是否过期，不能直接删除。</span><div style="padding: 3px 0"><img src="https://img.mubu.com/document_image/87edeed9-7e57-4865-822b-88398411cfab-1461950.jpg" style="max-width: 720px; width: 354px;" class="attach-img"></div></li></ul></li></ul></div>
+</body>
+</html>
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://ooooor.github.io/post/jdk-zhong-lin-li-jin-zhi-de-she-ji-mo-shi">
+              <h3 class="post-title">
+                下一篇：JDK中淋漓尽致的设计模式
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+        
+          <div id="gitalk-container"></div>
+        
+
+        
+      
+
+      <div class="site-footer">
+  <div class="slogan">书是解救我的郎中</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/ooooor" target="_blank">ooooor</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+  
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: 'c8db63cdd270e6869af2',
+        clientSecret: 'ced31bbeb80de2d1045b1cc1356dce13c1136539',
+        repo: 'ooooor.github.io',
+        owner: 'ooooor',
+        admin: ['ooooor'],
+        id: location.pathname,      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>
